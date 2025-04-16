@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.filedialog as fdialog
 import tkinter.font as font
+import tkinter.simpledialog as dialog
 
 
 def save_as():
@@ -177,6 +178,38 @@ def redo():
     except tk.TclError:
         pass
 
+def find():
+    text_to_find = dialog.askstring("Find", "Enter text to find: ")
+
+    if text_to_find:
+        start_index = text.index("1.0")
+        while start_index:
+            start_index = text.search(text_to_find, start_index, stopindex="end")
+            if not start_index:
+                    break
+            end_index = f"{start_index}+{len(text_to_find)}c"
+            text.tag_add("highlight", start_index, end_index)
+            text.tag_config("highlight", background="yellow")
+            start_index = end_index
+            root.after(10000, lambda: text.tag_remove("highlight", "1.0", "end"))
+    
+
+def replace():
+    text_to_find = dialog.askstring("Find", "Enter text to find: ")
+    if text_to_find:
+        text_to_replace = dialog.askstring("Replace", "Enter text to replace with: ")
+        if text_to_replace:
+            start_index = text.index("1.0")
+            while start_index:
+                start_index = text.search(text_to_find, start_index, stopindex="end")
+                if not start_index:
+                    break
+                end_index = f"{start_index}+{len(text_to_find)}c"
+                text.delete(start_index, end_index)
+                text.insert(start_index, text_to_replace)
+                start_index = f"{start_index}+{len(text_to_replace)}c"
+        
+            
 
 def main():
     global root, text, status, current_font, current_size, current_path
@@ -208,6 +241,8 @@ def main():
     )
     root.bind("<Control-z>", lambda event: undo())
     root.bind("<Control-y>", lambda event: redo())
+    root.bind("<Control-f>", lambda event: find())
+    root.bind("<Control-h>", lambda event: replace())
 
     # Status bar
     status = tk.Label(root, text="Ready", anchor="w")
