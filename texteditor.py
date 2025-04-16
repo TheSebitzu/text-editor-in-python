@@ -4,6 +4,7 @@ import tkinter.font as font
 
 
 def save_as():
+    global current_path
 
     # From line 1, char 0 to end - 1 char (avoid last newline)
     content = text.get("1.0", "end-1c")
@@ -17,10 +18,25 @@ def save_as():
     if path:
         with open(path, "w") as file:
             file.write(content)
+        current_path = path
         update_status("File Saved")
 
 
+def save_file(event=None):
+    global current_path
+    content = text.get("1.0", "end-1c")
+
+    if current_path:
+        with open(current_path, "w") as file:
+            file.write(content)
+        update_status(f"Saved to {current_path}")
+    else:
+        save_as()
+
+
 def open_file():
+    global current_path
+
     path = fdialog.askopenfilename(
         defaultextension=".txt",
         filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")],
@@ -30,7 +46,8 @@ def open_file():
             # Clear current text and write over it
             text.delete("1.0", "end")
             text.insert("1.0", file.read())
-            update_status(f"Opened {path}")
+        current_path = path
+        update_status(f"Opened {path}")
 
 
 def set_font(font_name):
@@ -53,6 +70,7 @@ def create_menu():
     # Create file menu
     file_menu = tk.Menu(menu_bar, tearoff=0)
     file_menu.add_command(label="Open", command=open_file)
+    file_menu.add_command(label="Save", command=save_file)
     file_menu.add_command(label="Save As", command=save_as)
 
     menu_bar.add_cascade(label="File", menu=file_menu)
@@ -135,7 +153,9 @@ def toggle_underline():
 
 
 def main():
-    global root, text, status, current_font, current_size
+    global root, text, status, current_font, current_size, current_path
+
+    current_path = None
 
     # Default font and size
     current_font = "Helvetica"
@@ -149,7 +169,7 @@ def main():
     root.geometry("640x480")
 
     # Keybinds
-    root.bind("<Control-s>", lambda event: save_as())
+    root.bind("<Control-s>", lambda event: save_file())
     root.bind("<Control-o>", lambda event: open_file())
     root.bind("<Control-b>", lambda event: toggle_bold())
     root.bind("<Control-i>", lambda event: toggle_italic())
