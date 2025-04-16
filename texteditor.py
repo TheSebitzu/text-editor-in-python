@@ -151,6 +151,18 @@ def toggle_underline():
         current_font.config(underline=0)
     text.config(font=current_font)
 
+def on_close():
+    answer = tk.messagebox.askyesnocancel(
+            "Quit", "Do you want to save before exiting?"
+    )
+
+    if answer:
+        save_file()
+        root.destroy()
+    elif answer is False:
+        root.destroy()
+    else:
+        return
 
 def main():
     global root, text, status, current_font, current_size, current_path
@@ -201,6 +213,9 @@ def main():
 
     # Create the menu bar
     create_menu()
+
+    # Ask before exit
+    root.protocol("WM_DELETE_WINDOW", on_close)
 
     # App loop
     root.mainloop()
