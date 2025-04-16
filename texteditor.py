@@ -151,10 +151,9 @@ def toggle_underline():
         current_font.config(underline=0)
     text.config(font=current_font)
 
+
 def on_close():
-    answer = tk.messagebox.askyesnocancel(
-            "Quit", "Do you want to save before exiting?"
-    )
+    answer = tk.messagebox.askyesnocancel("Quit", "Do you want to save before exiting?")
 
     if answer:
         save_file()
@@ -163,6 +162,21 @@ def on_close():
         root.destroy()
     else:
         return
+
+
+def undo():
+    try:
+        text.edit_undo()
+    except tk.TclError:
+        pass
+
+
+def redo():
+    try:
+        text.edit_redo()
+    except tk.TclError:
+        pass
+
 
 def main():
     global root, text, status, current_font, current_size, current_path
@@ -188,8 +202,12 @@ def main():
     root.bind("<Control-t>", lambda event: toggle_strikethrough())
     root.bind("<Control-u>", lambda event: toggle_underline())
     root.bind("<Control-plus>", lambda event: set_size(current_size + 2))
-    root.bind("<Control-minus>", lambda event: set_size(current_size - 2) if current_size > 2 else None)
-
+    root.bind(
+        "<Control-minus>",
+        lambda event: set_size(current_size - 2) if current_size > 2 else None,
+    )
+    root.bind("<Control-z>", lambda event: undo())
+    root.bind("<Control-y>", lambda event: redo())
 
     # Status bar
     status = tk.Label(root, text="Ready", anchor="w")
@@ -200,7 +218,7 @@ def main():
     root.columnconfigure(0, weight=1)
 
     # Text editor area
-    text = tk.Text(root, wrap="word")
+    text = tk.Text(root, wrap="word", undo=True, maxundo=-1)
     text.grid(row=0, column=0, sticky="nsew")
 
     # Add word counter to status bar
