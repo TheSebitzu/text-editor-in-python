@@ -77,6 +77,10 @@ def create_menu():
             label=size, command=lambda font_size=size: set_size(font_size)
         )
     edit_menu.add_cascade(label="Size", menu=size_menu)
+    edit_menu.add_command(label="Bold", command=toggle_bold)
+    edit_menu.add_command(label="Italic", command=toggle_italic)
+    edit_menu.add_command(label="Strikethrough", command=toggle_strikethrough)
+    edit_menu.add_command(label="Underline", command=toggle_underline)
 
     menu_bar.add_cascade(label="Edit", menu=edit_menu)
 
@@ -92,6 +96,42 @@ def word_count(event=None):
     char_count = len(content)
     word_count = len(content.split())
     update_status(f"{char_count} characters, {word_count} words")
+
+
+def toggle_bold():
+    current_font = font.Font(font=text.cget("font"))
+    if current_font.cget("weight") == "normal":
+        current_font.config(weight="bold")
+    else:
+        current_font.config(weight="normal")
+    text.config(font=current_font)
+
+
+def toggle_italic():
+    current_font = font.Font(font=text.cget("font"))
+    if current_font.cget("slant") == "roman":
+        current_font.config(slant="italic")
+    else:
+        current_font.config(slant="roman")
+    text.config(font=current_font)
+
+
+def toggle_strikethrough():
+    current_font = font.Font(font=text.cget("font"))
+    if current_font.cget("overstrike") == 0:
+        current_font.config(overstrike=1)
+    else:
+        current_font.config(overstrike=0)
+    text.config(font=current_font)
+
+
+def toggle_underline():
+    current_font = font.Font(font=text.cget("font"))
+    if current_font.cget("underline") == 0:
+        current_font.config(underline=1)
+    else:
+        current_font.config(underline=0)
+    text.config(font=current_font)
 
 
 def main():
@@ -111,6 +151,10 @@ def main():
     # Keybinds
     root.bind("<Control-s>", lambda event: save_as())
     root.bind("<Control-o>", lambda event: open_file())
+    root.bind("<Control-b>", lambda event: toggle_bold())
+    root.bind("<Control-i>", lambda event: toggle_italic())
+    root.bind("<Control-t>", lambda event: toggle_strikethrough())
+    root.bind("<Control-u>", lambda event: toggle_underline())
 
     # Status bar
     status = tk.Label(root, text="Ready", anchor="w")
