@@ -175,6 +175,9 @@ def main():
     root.bind("<Control-i>", lambda event: toggle_italic())
     root.bind("<Control-t>", lambda event: toggle_strikethrough())
     root.bind("<Control-u>", lambda event: toggle_underline())
+    root.bind("<Control-plus>", lambda event: set_size(current_size + 2))
+    root.bind("<Control-minus>", lambda event: set_size(current_size - 2) if current_size > 2 else None)
+
 
     # Status bar
     status = tk.Label(root, text="Ready", anchor="w")
