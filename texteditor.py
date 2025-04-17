@@ -20,6 +20,7 @@ def save_as():
         with open(path, "w") as file:
             file.write(content)
         current_path = path
+        root.title(current_path if current_path else "Untitled")
         update_status("File Saved")
 
 
@@ -30,6 +31,7 @@ def save_file(event=None):
     if current_path:
         with open(current_path, "w") as file:
             file.write(content)
+        root.title(current_path if current_path else "Untitled")
         update_status(f"Saved to {current_path}")
     else:
         save_as()
@@ -48,6 +50,7 @@ def open_file():
             text.delete("1.0", "end")
             text.insert("1.0", file.read())
         current_path = path
+        root.title(current_path if current_path else "Untitled")
         update_status(f"Opened {path}")
 
 
@@ -222,7 +225,7 @@ def main():
 
     # Create main aplication window
     root = tk.Tk()
-    root.title("Text editor")
+    root.title(current_path if current_path else "Untitled")
 
     # Start size
     root.geometry("640x480")
